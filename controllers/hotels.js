@@ -67,7 +67,7 @@ exports.getHotels = async(req, res, next) => {
             }
         }
 
-        res.status(200).json({ success: true, count: hotels.length, data: hotels });
+        res.status(200).json({ success: true, count: hotels.length, pagination, data: hotels });
 
     } catch(err){
         res.status(400).json({success: false});
