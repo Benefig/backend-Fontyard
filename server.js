@@ -38,9 +38,9 @@ const server = app.listen(
     PORT, 
     console.log(
         'Server running in ', 
-        process.env.NO, 
-        'mode on port ', 
-        "on" + process.env.HOST + " :" + PORT
+        process.env.NODE_ENV, 
+        'mode on port', 
+        process.env.HOST + ": " + PORT
     )
 );
 
