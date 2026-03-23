@@ -16,15 +16,13 @@ exports.getBookings = async(req, res, next) => {
     else{ //If you are Admin, you see all XD!
         if(req.params.hotelId){
             console.log(req.params.hotelId);
-            query = Booking.find({hotel:req.params.hotelId}).populate({
-            path: 'hotel',
-            select: 'name province tel'
-            });
+            query = Booking.find({hotel:req.params.hotelId})
+            .populate({ path: 'hotel', select: 'name province tel' })
+            .populate({ path: 'user', select: 'name email' });
         } else {
-            query = Booking.find().populate({
-            path: 'hotel',
-            select: 'name province tel'
-            });
+            query = Booking.find()
+            .populate({ path: 'hotel', select: 'name province tel' })
+            .populate({ path: 'user', select: 'name email' });
         }
     }
 
