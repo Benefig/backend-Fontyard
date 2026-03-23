@@ -95,6 +95,22 @@ exports.addBooking = async(req, res, next) => {
             });
         }
 
+        //Check for duplicate booking: same user, same hotel, same day
+        const newDate = new Date(req.body.apptDate);
+        const dayStart = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
+        const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
+        const duplicateBooking = await Booking.findOne({
+            user: req.user.id,
+            hotel: req.params.hotelId,
+            apptDate: { $gte: dayStart, $lt: dayEnd }
+        });
+        if(duplicateBooking){
+            return res.status(400).json({
+                success: false,
+                message: `You have already booked this hotel on this date!`
+            });
+        }
+
         const booking = await Booking.create(req.body);
 
         res.status(200).json({success: true, data: booking});
@@ -125,6 +141,25 @@ exports.updateBooking = async(req, res, next) => {
                 success: false,
                 message: `User ${req.user.id} is not authorized to update this booking`
             });
+        }
+
+        //If updating the date, check for duplicate booking on same hotel + same day
+        if(req.body.apptDate){
+            const newDate = new Date(req.body.apptDate);
+            const dayStart = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
+            const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
+            const duplicateBooking = await Booking.findOne({
+                _id: { $ne: req.params.id },
+                user: booking.user,
+                hotel: booking.hotel,
+                apptDate: { $gte: dayStart, $lt: dayEnd }
+            });
+            if(duplicateBooking){
+                return res.status(400).json({
+                    success: false,
+                    message: `You already have a booking for this hotel on this date!`
+                });
+            }
         }
 
         booking = await Booking.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true});
