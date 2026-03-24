@@ -4,7 +4,7 @@ const RatingSchema = new mongoose.Schema({
     score: {
         type: Number,
         required: [true, 'Please add a rating between 0 and 5'],
-        min: 0,
+        min: 1,
         max: 5
     },
     user: {
