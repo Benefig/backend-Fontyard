@@ -53,6 +53,18 @@ exports.addRating = async (req, res, next) => {
         // Check if rating exists for this user/hotel combo; if so, update it
         let rating = await Rating.findOne({ user: req.user.id, hotel: req.params.hotelId });
 
+        //If score = 0 → delete rating instead of update/create
+        if (req.body.score === 0) {
+            if (rating) {
+                await rating.deleteOne();
+            }
+
+            return res.status(200).json({
+                success: true,
+                data: {}
+            });
+        }
+
         if (rating) {
             // Update existing rating
             rating = await Rating.findByIdAndUpdate(rating._id, { score: req.body.score }, { new: true, runValidators: true });
