@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const RatingSchema = new mongoose.Schema({
     score: {
         type: Number,
-        required: [true, 'Please add a rating between 1 and 5'],
-        min: 1,
+        required: [true, 'Please add a rating between 0 and 5'],
+        min: 0,
         max: 5
     },
     user: {
